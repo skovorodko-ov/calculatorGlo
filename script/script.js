@@ -8,9 +8,9 @@ let isNumber = function (n) {
 let money,
     start = function() {
       do {
-        money = +prompt('Ваш месячный доход?', 50000);
+        money = prompt('Ваш месячный доход?', 50000);
       }
-      while (!isNumber(money));
+      while (!isNumber(money) || money.trim() === '');
     };
 
 start();
@@ -31,7 +31,7 @@ let appData = {
           appData.expenses[prompt('Введите обязательную статью расходов?')] = +prompt('Во сколько это обойдется?');
         }
   },
-  budget: money,
+  budget: +money,
   budgetDay: 0,
   budgetMonth: 0,
   expensesMonth: 0,
