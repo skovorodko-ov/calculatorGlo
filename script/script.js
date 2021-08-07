@@ -48,7 +48,7 @@ let appData = {
     }
 
     let addExpenses = prompt('Перечислите возможные расходы за рассчитываемый период через запятую');
-        appData.addExpenses = addExpenses.toLocaleLowerCase().split(', ');
+        appData.addExpenses = addExpenses.toLocaleLowerCase().split(',');
 
         for (let i = 0; i < 2; i++) {
           let answer1, answer2;
