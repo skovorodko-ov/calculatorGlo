@@ -283,9 +283,9 @@ class AppData {
   depositPercent.addEventListener('change', () => {
     if (!isNumber(depositPercent.value) || +depositPercent.value > 100) {
       alert('Введите корректное значение в поле проценты');
-      btnStart.style.display = 'none';
+      btnStart.disabled = true;
     } else {
-      btnStart.style.display = 'inline-block';
+      btnStart.disabled = false;
     }
   });
 
