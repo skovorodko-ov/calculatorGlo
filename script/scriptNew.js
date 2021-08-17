@@ -64,6 +64,7 @@ class AppData {
   }
 
   reset() {
+    this.removeExpInc();
     this.income = {};
     this.incomeMonth = 0;
     this.addIncome = [];
@@ -79,6 +80,14 @@ class AppData {
     this.showResult();
     btnStart.style.display = 'inline-block';
     btnCancel.style.display = 'none';
+    depositBank.style.display = 'none';
+    depositAmount.style.display = 'none';
+    depositPercent.style.display = 'none';
+    depositCheck.checked = false;
+    depositBank.value = '';
+    incomePlus.style.display = 'inline-block';
+    expensesPlus.style.display = 'inline-block';
+
     leftInputsText = data.querySelectorAll('[type="text"]');
     leftInputsText.forEach((item) => {
       item.value = '';
@@ -121,6 +130,17 @@ class AppData {
     arr = document.querySelectorAll(`.${item}-items`);
     if (arr.length === 3) {
       plus.style.display = 'none';
+    }
+  }
+
+  removeExpInc() {
+    const allExp = document.querySelectorAll('.expenses-items');
+    const allInc = document.querySelectorAll('.income-items');
+    for (let i = 1; i < allExp.length; i++) {
+      allExp[i].remove();
+    }
+    for (let i = 1; i < allInc.length; i++) {
+      allInc[i].remove();
     }
   }
 
@@ -220,10 +240,10 @@ class AppData {
     } else {
       depositBank.style.display = 'none';
       depositAmount.style.display = 'none';
+      depositPercent.style.display = 'none';
       depositBank.value = '';
       depositAmount.value = '';
       this.deposit = false;
-      depositPercent.style.display = 'none';
       depositBank.removeEventListener('change', this.changePercent);
     }
   }
