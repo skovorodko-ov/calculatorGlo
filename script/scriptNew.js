@@ -61,6 +61,11 @@ class AppData {
     this.getAddExpInc();
     this.getBudget();
     this.showResult();
+
+    // записывает объект для передачи в localStorage
+    creatorStorageObjeck();
+    localStorage.setItem('appDataStorage', JSON.stringify(appDataStorage));
+    setCookeiOnStart();
   }
 
   reset() {
@@ -96,6 +101,9 @@ class AppData {
     periodSelect.value = '1';
     targetMonthValue.value = '';
     periodAmount.innerHTML = periodSelect.value;
+    
+    localStorage.clear();
+    deleteAllCookies();
   }
 
   showResult() {
@@ -290,8 +298,10 @@ class AppData {
     flag = 1;
     control();
 
-    if (flag === 1) {
+    if (flag) {
       appData.start.call(appData);
+      leftInputsText = data.querySelectorAll('[type="text"]');
+      console.log(leftInputsText);
       leftInputsText.forEach((item) => {
         item.setAttribute('disabled', '');
         btnCancel.style.display = 'inline-block';
@@ -330,3 +340,180 @@ class AppData {
 const appData = new AppData();
 
 appData.eventsListeners();
+
+
+let appDataStorage;
+
+
+const creatorStorageObjeck = () => {
+  appDataStorage = {};
+
+  const additionalIncomeItem = document.querySelectorAll('.additional_income-item');
+  let arradditionalIncomeItem = [];
+  for (let i =0; i < additionalIncomeItem.length; i++) {
+    arradditionalIncomeItem.push(additionalIncomeItem[i].value);
+  }
+
+  const additionalIncomeTitle = document.querySelectorAll('.income-title');
+  let arrIncomiTitle = [];
+  for (let i =0; i < additionalIncomeTitle.length; i++) {
+    arrIncomiTitle.push(additionalIncomeTitle[i].value);
+  }
+
+  const additionalIncomeAmount = document.querySelectorAll('.income-amount');
+  let arrIncomiAmount = [];
+  for (let i =0; i < additionalIncomeAmount.length; i++) {
+    arrIncomiAmount.push(additionalIncomeAmount[i].value);
+  }
+
+  const additionalExpensesTitle = document.querySelectorAll('.expenses-title');
+  let arrExpensesTitle = [];
+  for (let i =0; i < additionalExpensesTitle.length; i++) {
+    arrExpensesTitle.push(additionalExpensesTitle[i].value);
+  }
+
+  const additionalExpensesAmount = document.querySelectorAll('.expenses-amount');
+  let arrExpensesAmount = [];
+  for (let i =0; i < additionalExpensesAmount.length; i++) {
+    arrExpensesAmount.push(additionalExpensesAmount[i].value);
+  }
+
+  appDataStorage.salaryAmount = salaryAmount.value;
+  appDataStorage.arrIncomiTitle = arrIncomiTitle;
+  appDataStorage.arrIncomesAmount = arrIncomiAmount;
+  appDataStorage.arrExpensesTitle = arrExpensesTitle;
+  appDataStorage.arrExpensesAmount = arrExpensesAmount;
+  appDataStorage.additionalIncomeItem = arradditionalIncomeItem;
+  appDataStorage.additionalExpensesItem = additionalExpensesItem.value;
+  appDataStorage.targetAmount = targetAmount.value;
+  appDataStorage.periodSelect = periodSelect.value;
+  appDataStorage.deposit = appData.deposit; 
+  appDataStorage.depositBank = depositBank.value; 
+  appDataStorage.depositAmount = depositAmount.value;
+  appDataStorage.depositPercent = depositPercent.value;
+  appDataStorage.budgetMonth = appData.budgetMonth;
+  appDataStorage.budgetDay = appData.budgetDay;
+  appDataStorage.expensesMonth = appData.expensesMonth;
+  appDataStorage.additionalIncomeValue = appData.addIncome.join(', '); 
+  appDataStorage.additionalExpensesValue = appData.addExpenses.join(', '); 
+  appDataStorage.incomePeriodValue = incomePeriodValue.value;
+  appDataStorage.targetMonthValue = targetMonthValue.value;
+};
+
+window.addEventListener('DOMContentLoaded', () => {
+  appDataStorage = JSON.parse(localStorage.getItem('appDataStorage')) || 0;
+    if (appDataStorage) {
+        targetMonthValue.value = appDataStorage.targetMonthValue;
+        incomePeriodValue.value = appDataStorage.incomePeriodValue;
+        depositPercent.value = appDataStorage.depositPercent;
+        depositAmount.value = appDataStorage.depositAmount;
+        depositBank.value = appDataStorage.depositBank;
+        periodSelect.value = appDataStorage.periodSelect;
+        targetAmount.value = appDataStorage.targetAmount;
+        additionalExpensesItem.value = appDataStorage.additionalExpensesItem;
+        salaryAmount.value = appDataStorage.salaryAmount;
+        budgetMonthValue.value = appDataStorage.budgetMonth;
+        budgetDayValue.value = appDataStorage.budgetDay;
+        expensesMonthValue.value = appDataStorage.expensesMonth;
+        additionalIncomeValue.value = appDataStorage.additionalIncomeValue;
+        additionalExpensesValue.value = appDataStorage.additionalExpensesValue;
+        periodAmount.innerHTML = appDataStorage.periodSelect;
+        appData.budgetMonth = appDataStorage.budgetMonth;
+        periodSelect.addEventListener('input', () => {
+        incomePeriodValue.value = appData.calcSavedMoney();
+        });
+        depositCheck.checked = appDataStorage.deposit;
+        appData.depositHandler();
+        for (let i = 0; i < additionalIncomeItem.length; i++) {
+          additionalIncomeItem[i].value = appDataStorage.additionalIncomeItem[i];
+        }
+
+          // создаем блоки доходов и расходов после перезагрузки
+        let count = 0;
+        appDataStorage.arrIncomiTitle.forEach(item => {
+          if (count > 0) {
+            appData.addExpIncBlock('income');
+          }
+          count += 1;
+        });
+        const additionalIncomeTitle = document.querySelectorAll('.income-title');
+        const additionalIncomeAmount = document.querySelectorAll('.income-amount');
+        for (let i = 0; i < additionalIncomeTitle.length; i++) {
+          additionalIncomeTitle[i].value = appDataStorage.arrIncomiTitle[i];
+          additionalIncomeAmount[i].value = appDataStorage.arrIncomesAmount[i];
+        }
+
+        let count1 = 0;
+        appDataStorage.arrExpensesTitle.forEach(item => {
+          if (count1 > 0) {
+            appData.addExpIncBlock('expenses');
+          }
+          count1 += 1;
+        });
+        const additionalExpensesTitle = document.querySelectorAll('.expenses-title');
+        const additionalExpensesAmount = document.querySelectorAll('.expenses-amount');
+        for (let i = 0; i < additionalExpensesTitle.length; i++) {
+          additionalExpensesTitle[i].value = appDataStorage.arrExpensesTitle[i];
+          additionalExpensesAmount[i].value = appDataStorage.arrExpensesAmount[i];
+        }
+        
+      // appData.start.call(appData);
+      leftInputsText = data.querySelectorAll('[type="text"]');
+      leftInputsText.forEach((item) => {
+        item.setAttribute('disabled', '');
+        btnCancel.style.display = 'inline-block';
+        btnStart.style.display = 'none';
+      });
+    }
+
+
+    chechStorageCookie();
+
+});
+
+
+// функция создания кукки
+const setCookei = (key, value, year, month, day, path, domain, secure) => {
+  let cookieStr = key + '=' + value;
+  if (year) {
+    const expires = new Date(year, month-1, day);
+    cookieStr += '; expires=' + expires.toGMTString();
+  }
+
+  cookieStr += path ? '; path=' + path : '';
+  cookieStr += domain ? '; domain=' + domain : '';
+  cookieStr += secure ? '; secure' : '';
+
+  document.cookie = cookieStr;
+};
+
+const setCookeiOnStart = () => {
+  for (let key in appDataStorage) {
+    setCookei(key, appDataStorage[key], 2021, 12, 1);
+  }
+};
+
+
+// функция удаления всех кукки
+function deleteAllCookies() {
+    let cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i];
+        let eqPos = cookie.indexOf("=");
+        let name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT";
+    }
+}
+
+// проверка соответствия локол сторедж и кукки
+const chechStorageCookie = () => {
+  if (appDataStorage) {
+    let cookies = document.cookie.split(";");
+    let keys = Object.keys(appDataStorage);
+
+    if (cookies.length !== keys.length) {
+      appData.reset();
+    }
+  }
+};
